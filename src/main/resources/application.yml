@@ -12,6 +12,10 @@ spring:
     hikari:              # 连接池优化配置（可选）
       connection-timeout: 30000
       maximum-pool-size: 20
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
 
   jpa:
     hibernate:
@@ -28,10 +32,10 @@ spring:
     port: 6379
     password: ''         # 无密码留空字符串
     database: 0          # 默认DB
-    timeout: 5000        # 连接超时(ms)
+    timeout: 10000        # 连接超时(ms)
 
 # 自定义JWT配置
 app:
   jwt:
-    secret: "your_jwt_secret_key_here_32_characters_long"  # 至少32位
+    secret: ZFXeAFTZZev/BdnRonEppEXwgQFHQA34NeL/SrUk2rQ= # 至少32位
     expiration-ms: 86400000  # 24小时

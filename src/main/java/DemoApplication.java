@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EntityScan(basePackages = {"modules.auth.entity"})
-@EnableJpaRepositories(basePackages = {"modules.auth.repository"})
+@EntityScan(basePackages = {"modules.auth.entity", "modules.product.entity"})
+@EnableJpaRepositories(basePackages = {"modules.auth.repository", "modules.product.repository"})
 public class DemoApplication {
 
 	public static void main(String[] args) {

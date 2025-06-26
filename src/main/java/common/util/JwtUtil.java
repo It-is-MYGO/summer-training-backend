@@ -15,38 +15,47 @@ import java.util.Date;
 public class JwtUtil {
     
     @Value("${app.jwt.secret}")
-    private String jwtSecret;
+    private String secret;
     
     @Value("${app.jwt.expiration-ms}")
-    private int jwtExpirationMs;
-    
-    public String generateJwtToken(Authentication authentication) {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        
+    private long expirationMs;
+
+    public String generateToken(Authentication authentication) {
         return Jwts.builder()
-                .subject(userPrincipal.getUsername())
+                .subject(authentication.getName())
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key(), Jwts.SIG.HS256)
+                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
-    
-    private SecretKey key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+
+    public String generateJwtToken(Authentication authentication) {
+        return generateToken(authentication);
     }
-    
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().verifyWith(key()).build()
-                .parseSignedClaims(token).getPayload().getSubject();
+
+    public String extractUsername(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
-    
-    public boolean validateJwtToken(String authToken) {
+
+    public boolean validateToken(String token) {
         try {
-            Jwts.parser().verifyWith(key()).build().parseSignedClaims(authToken);
+            Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            // logger.error("Invalid JWT token: {}", e.getMessage());
+            return false;
         }
-        return false;
+    }
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
