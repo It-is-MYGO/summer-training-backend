@@ -22,8 +22,3 @@ public class Role {
         this.name = name;
     }
 }
-
-public enum ERole {
-    ROLE_USER,
-    ROLE_ADMIN
-}
